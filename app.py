@@ -1,19 +1,24 @@
 from flask import Flask, request, render_template
 import pickle
-import joblib
-
 import numpy as np
+import os
+
+
 app = Flask(__name__)
+
 
 with open('xgb_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
+
 with open('tfidf_vectorizer.pkl', 'rb') as f:
     vectorizer = pickle.load(f)
+
 
 @app.route('/')
 def home():
     return render_template('index.html')
+
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -27,5 +32,7 @@ def predict():
 
     return render_template('index.html', prediction_text=f'{label} News (Confidence: {confidence:.2f})')
 
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
